@@ -14,11 +14,11 @@ app.engine('.hbs',exphbs({
     defaultLayout: 'main',
     layoutsDir:path.join(app.get('views'),'layouts'),
     partialsDir:path.join(app.get('views'),'partials'),
-    extname:'hbs',
+    extname:'.hbs',
     helpers:require('./lib/handlebars')
 }))
 
-app.set('views engine','.hbs');
+app.set('view engine','.hbs');//tener esta liena en cuenta es view no views todo puede desconfigurarce por esta lienea
 
 //middleware
 app.use(morgan('dev'));
