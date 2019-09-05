@@ -1,9 +1,9 @@
 const mysql = require('mysql');
 const {promisify} = require('util');//modulo que convierte callback en promesas
 
-const {cleverCloud} =require('./keys');
+const {database} =require('./keys');
 
-const pool = mysql.createPool(cleverCloud);
+const pool = mysql.createPool(database);
 
 pool.getConnection((err, connection)=>{
     if(err){
