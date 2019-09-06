@@ -22,20 +22,9 @@
 <body>
     {{> navBar}}{{!-- esto se encuentra en partial no hace falta 
     colocar direccion el componente view lo detecta automaticamente --}}
-    {{#if success}}
-    .<div class="container p-4" >
-        <div class="row">
-            <div class="col-md-4 mx-auto">
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    {{success}}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="close" >
-                        <span aria-hidden="true" >&otimes;</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-    {{/if}}
+
+    {{>message}}
+    
 
     {{{body}}}
 </body>
