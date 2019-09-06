@@ -3,7 +3,7 @@ const pool = require('../database')
 const router = express.Router();
 
 router.get('/',(req,res)=>{
-    res.send("Hola Mundo")
+    res.render('./layouts/index')
 })
 
 router.get('/signup', async(req,res)=>{       
