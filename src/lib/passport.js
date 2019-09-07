@@ -3,8 +3,51 @@ const LocalStrategy = require('passport-local').Strategy;
 const pool =  require('../database');
 const helpers =  require('.//helpers')
 
+//congifurar signIn
+passport.use('local.signin', new LocalStrategy({
+    usernameField:'username',
+    passwordField: 'password', 
+    passReqToCallback:true
+} ,async(req,username,password,done)=>{
+    
+    const rows= await pool.query('SELECT * FROM users WHERE username = ?',[username]);
+    
+    
 
-//configuracion
+    if(rows.length>0){
+        const user = rows[0];
+        const validatePassword = await helpers.matchPassword(password, user.password);
+        console.log(user);
+        if(validatePassword)
+        {
+            console.log(user);
+            
+                done(null,user, req.flash('success','Welcome'+ user.username));
+        }
+        else{
+            
+            return done(null,false, req.flash('message','password incorrecto'));
+        }
+    }
+    else{
+        
+        return done(null,false, req.flash('message','nombre de user no existe'));
+    }
+    
+    
+    
+
+})
+    
+    )
+
+    
+
+
+
+
+
+//configuracion signUp
 passport.use('local.signup', new LocalStrategy({
     usernameField:'username',
     passwordField: 'password', 
@@ -31,8 +74,7 @@ async(req,username,password,done)=>{
   changedRows: 0
 }*/}
     
-    User.id=result.insertId;
-    console.log( result);
+    User.id=result.insertId;    
     
     return done(null,User);
     
@@ -40,18 +82,14 @@ async(req,username,password,done)=>{
 }   )   )
 
 passport.serializeUser((user,done)=>{
-    console.log(user);
-    
     done(null,user.id);
 })
 
-passport.deserializeUser( async ( id, done ) => {
-    console.log("paso");
+passport.deserializeUser( async ( id, done ) => {    
     
-  const rows = await  pool.query('SELECT * FROM users WHERE id = ?',[id]);
-  console.log(rows[0]);
+  const rows = await  pool.query('SELECT * FROM users WHERE id = ?',[id]); 
   
-  done(null,rows[0]);
+  return done(null,rows[0]);
 })
 
 

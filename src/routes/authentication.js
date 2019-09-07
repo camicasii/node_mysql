@@ -32,8 +32,18 @@ router.get('/profile',(req,res)=>{
 })
 
 router.get('/signin',(req,res)=>{
+    console.log("entro");
+    
     res.render('./auth/signin')
 
 });
+
+router.post('/signin',passport.authenticate('local.signin',{
+        successRedirect:'/profile',
+        failureRedirect:'/signin',
+        failureFlash:true,
+    })
+
+);
 
 module.exports = router;
