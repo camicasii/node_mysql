@@ -6,8 +6,11 @@ const flash = require('connect-flash');//para enviar mensajes a la pagina web cu
 const session = require('express-session')//controla la sesiones 
 const mysqlStore = require('express-mysql-session');//es usada para crear una coneccion con la base de datos
 const {database} =require('./keys');
+const passport = require('passport');
+
 //inicialization
 const app = express();
+require('./lib/passport');
 
 //settings
 app.set('port', process.env.PORT||4000);
@@ -35,6 +38,8 @@ app.use(flash());
 app.use(morgan('dev'));
 app.use(express.urlencoded( {extended: false}));
 app.use(express.json());
+app.use(passport.initialize());
+app.use(passport.session());
 
 
 //global Variables 
@@ -56,6 +61,7 @@ app.use(express.static(path.join(__dirname,'public')))
 //Starting of server
 
 app.listen(app.get('port'), ()=>{
-    console.log("server on port" , app.get('port'));
-    
+    console.log("server on port" , app.get('port'));    
 })
+
+
