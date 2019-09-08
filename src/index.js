@@ -28,12 +28,16 @@ app.engine('.hbs',exphbs({
 app.set('view engine','.hbs');//tener esta liena en cuenta es view no views todo puede desconfigurarce por esta lienea
 
 //middleware
+console.log(__dirname +'/public');
+
+app.use('/',express.static('/home/jhonattan/Desktop/MegaProyectoNode/src/pubic'));// agrega el directorio estatico
 app.use(session({
     secret:"JJRD",
     resave:false,
     saveUninitialized:false,
     store: new mysqlStore(database)//Guardando las sesciones en la base de dato
 }))
+//app.use(express.static(path.join(__dirname, 'public')));
 app.use(flash());
 app.use(morgan('dev'));
 app.use(express.urlencoded( {extended: false}));
@@ -42,11 +46,14 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 
+
+
 //global Variables 
 
 app.use((req,res,next)=>{
     app.locals.success = req.flash('success')
     app.locals.message = req.flash('message')
+    app.locals.user = req.user;
     next();
 })
 

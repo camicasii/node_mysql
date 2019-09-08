@@ -1,49 +1,57 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
+const {isLoggedIn, isNotLoggedIn} =require('../lib/auth');
 
-router.get('/signup',(req,res)=>{
+router.get('/signup',isNotLoggedIn,(req,res)=>{
     res.render('./auth/signup')
     
 
 });
-/*
-router.post('/signup',(req,res)=>{
-    //const {password, username, fullname} = req.body
+
+/*router.post('/signup',isNotLoggedIn,(req,res)=>{
+    const {password, username, fullname} = req.body
+    
     passport.authenticate('local.signup',{
         successRedirect:'/profile',
         failureRedirect:'/singnup',
         failureFlash:true
     });    
     console.log(password, username, fullname);
-    res.render('./auth/signup')
-});
-*/
+    //res.render('./auth/signup')
+});*/
+
 
 //este bloque de codigo cumple la misma funcion del bloque comentado anteriormente
-router.post('/signup', passport.authenticate('local.signup',{
+router.post('/signup',isNotLoggedIn, passport.authenticate('local.signup',{
     successRedirect:'/profile',
-    failureRedirect:'/singnup',
+    failureRedirect:'/signup',
     failureFlash:true
 }))
 
-router.get('/profile',(req,res)=>{
-    res.send("Todo bien")
+router.get('/profile',isLoggedIn,(req,res)=>{
+    
+    res.render('profile')
 })
 
-router.get('/signin',(req,res)=>{
+router.get('/signin',isNotLoggedIn,(req,res)=>{
     console.log("entro");
     
     res.render('./auth/signin')
 
 });
 
-router.post('/signin',passport.authenticate('local.signin',{
+router.post('/signin',isNotLoggedIn,passport.authenticate('local.signin',{
         successRedirect:'/profile',
         failureRedirect:'/signin',
         failureFlash:true,
     })
 
 );
+router.get('/logout',isLoggedIn,(req,res)=>{
+    req.logOut();
+    res.redirect('/signin')
+
+})
 
 module.exports = router;

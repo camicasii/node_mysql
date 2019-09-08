@@ -3,19 +3,27 @@ const router = express.Router();
 
 const pool = require('../database')
 const helpers = require('../lib/handlebars')
+const {isLoggedIn} =require('../lib/auth');
 
-router.get('/add',(req,res)=>{
+router.get('/add',isLoggedIn,(req,res)=>{  
+    
+    
     res.render('links/add')
+
 })
 
-router.post('/add',async(req,res)=>{
+router.post('/add',isLoggedIn,async(req,res)=>{
     
     
     const {title, url, description} = req.body;
     const newLink ={
         title,
         url,
-        description        
+        user_id:req.user.id,
+        description
+        
+        
+
     }
     
     
@@ -26,12 +34,37 @@ router.post('/add',async(req,res)=>{
     res.redirect('/links/')
 })
 
-router.get('/',async(req,res)=>{
-    const links = await pool.query('SELECT * FROM links')    
-    res.render('./links/list',{links})
+router.get('/',isLoggedIn,async(req,res)=>{
+    
+    try{
+    
+    
+        const result = await pool.query('SELECT * FROM users WHERE username = ?',"camicasii2")       
+       
+        console.log(result);
+        
+        
+        
+    
+    const links = await pool.query('SELECT * FROM links WHERE user_id = ?', [req.user.id])
+    if(links[0] === undefined ||links[0] === null ){
+        console.log(links);
+        res.render('./links/list',links)
+    }
+    else if(links.length>0){
+        console.log(links);
+        
+        res.render('./links/list',{links})    
+    }
+    
+    }
+    catch{
+        console.log("error");
+        
+    }
 })
 
-router.get('/delete/:id', async(req,res)=>{
+router.get('/delete/:id',isLoggedIn, async(req,res)=>{
     
     const {id} = req.params;
 
@@ -41,13 +74,13 @@ router.get('/delete/:id', async(req,res)=>{
     res.redirect("/links/")
     
 })
-router.get('/edit/:id', async(req,res)=>{    
+router.get('/edit/:id',isLoggedIn, async(req,res)=>{    
     const {id} = req.params;         
     const link = await pool.query('SELECT * FROM links WHERE id = ?',id)             
     res.render('./links/edit',{link: link[0]})    
 })
 
-router.post('/edit/:id', async(req,res)=>{
+router.post('/edit/:id',isLoggedIn, async(req,res)=>{
     const {id}  = req.params;         
     const {title, url, description} = req.body;
     const newLink ={

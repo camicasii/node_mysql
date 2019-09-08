@@ -22,7 +22,7 @@ passport.use('local.signin', new LocalStrategy({
         {
             console.log(user);
             
-                done(null,user, req.flash('success','Welcome'+ user.username));
+                done(null,user, req.flash('success','Welcome '+ user.username));
         }
         else{
             
@@ -61,25 +61,30 @@ async(req,username,password,done)=>{
         fullname
     }
     User.password = await helpers.encryptPassword(password)
+    
+    
+    
+    
+    
+    const check = await pool.query('SELECT * FROM users WHERE username = ?',User.username)       
+    console.log( check.length ==0)
+    if(check.length ==0){    
+
     const result = await pool.query('INSERT INTO users SET ?',[User])
-   { /**console.log(result);
-     * OkPacket {
-  fieldCount: 0,
-  affectedRows: 1,
-  insertId: 9,
-  serverStatus: 2,
-  warningCount: 0,
-  message: '',
-  protocol41: true,
-  changedRows: 0
-}*/}
     
-    User.id=result.insertId;    
-    
+    User.id=result.insertId;        
     return done(null,User);
     
 
-}   )   )
+    }
+    else{
+        
+        return done(null,false, req.flash('message',` El usuario ${User.username} Ya Esta registrado intente con otro userName`));
+        
+        
+        
+    }
+    } ))
 
 passport.serializeUser((user,done)=>{
     done(null,user.id);
